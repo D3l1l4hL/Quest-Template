@@ -1,3 +1,6 @@
+// Meta XR All-in-One SDK installieren letzte Version 1.3.2
+
+
 using UnityEngine;
 using Unity.XR.CoreUtils;
 using UnityEngine.XR;
@@ -7,6 +10,7 @@ public class XROriginHeightController : MonoBehaviour
     public float heightSpeed = 1.0f; // Geschwindigkeit der Höhenänderung
     public float rotationSpeed = 60f; // Rotationsgeschwindigkeit in Grad pro Sekunde
     public float panSpeed = 1.0f; // Geschwindigkeit für Panning
+    public GameObject objectToFollow; // Das Objekt, dem gefolgt werden soll
     private XROrigin xrOrigin;
     private float targetHeight;
     private float targetYRotation;
@@ -26,45 +30,47 @@ public class XROriginHeightController : MonoBehaviour
 
     void Update()
     {
-        // Rechter Thumbstick: Höhe und Rotation
+        // Rechter Thumbstick: Objekt drehen (Y-Achse: rechts/links, X-Achse: vor/zurück)
         InputDevice rightHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
         if (rightHand.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 rightThumbstick))
         {
-            if (xrOrigin != null)
+            if (objectToFollow != null)
             {
-                if (Mathf.Abs(rightThumbstick.y) > 0.1f)
-                {
-                    targetHeight += rightThumbstick.y * heightSpeed * Time.deltaTime;
-                }
+                float rotY = 0f;
+                float rotX = 0f;
                 if (Mathf.Abs(rightThumbstick.x) > 0.1f)
                 {
-                    targetYRotation += rightThumbstick.x * rotationSpeed * Time.deltaTime;
+                    rotY = rightThumbstick.x * rotationSpeed * Time.deltaTime;
                 }
-                targetYRotation = Mathf.Repeat(targetYRotation, 360f);
+                if (Mathf.Abs(rightThumbstick.y) > 0.1f)
+                {
+                    rotX = -rightThumbstick.y * rotationSpeed * Time.deltaTime;
+                }
+                // Drehe das Objekt um die lokalen Achsen
+                objectToFollow.transform.Rotate(rotX, rotY, 0f, Space.Self);
             }
         }
 
-        // Linker Thumbstick: Panning
+        // Linker Thumbstick: Skalierung des Objekts auf der X-Achse (links/rechts)
         InputDevice leftHand = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
         if (leftHand.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 leftThumbstick))
         {
-            if (xrOrigin != null)
+            if (objectToFollow != null)
             {
-                if (leftThumbstick.magnitude > 0.1f)
+                if (Mathf.Abs(leftThumbstick.x) > 0.1f)
                 {
-                    // Panning in lokale X/Z Richtung
-                    targetPan.x += leftThumbstick.x * panSpeed * Time.deltaTime;
-                    targetPan.z += leftThumbstick.y * panSpeed * Time.deltaTime;
+                    Vector3 scale = objectToFollow.transform.localScale;
+                    float scaleChange = leftThumbstick.x * Time.deltaTime;
+                    scale.x = Mathf.Max(0.01f, scale.x + scaleChange); // Mindestgröße verhindern
+                    objectToFollow.transform.localScale = scale;
                 }
             }
+            // ...optional: alte Rotation um Y-Achse für xrOrigin entfernen, falls nicht mehr benötigt...
         }
 
-        // Position und Höhe direkt setzen
-        var pos = xrOrigin.CameraFloorOffsetObject.transform.localPosition;
-        pos.x = targetPan.x;
-        pos.z = targetPan.z;
-        pos.y = targetHeight;
-        xrOrigin.CameraFloorOffsetObject.transform.localPosition = pos;
+
+
+        // Keine Positions- oder Höhenänderung mehr, Tracking bleibt vollständig erhalten
 
         // Rotation direkt setzen
         xrOrigin.CameraFloorOffsetObject.transform.localRotation = Quaternion.Euler(0f, targetYRotation, 0f);
