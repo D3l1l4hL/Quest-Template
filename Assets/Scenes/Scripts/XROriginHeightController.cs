@@ -7,7 +7,8 @@ using UnityEngine.XR;
 
 public class XROriginHeightController : MonoBehaviour
 {
-    public float heightSpeed = 1.0f; // Geschwindigkeit der Höhenänderung
+    //public float heightSpeed = 1.0f; // Geschwindigkeit der Höhenänderung (z.B. per Stick)
+    public float heightButtonSpeed = 0.2f; // Geschwindigkeit für Taste X/Y (langsamer)
     public float rotationSpeed = 60f; // Rotationsgeschwindigkeit in Grad pro Sekunde
     public float panSpeed = 1.0f; // Geschwindigkeit für Panning
     public GameObject objectToFollow; // Das Objekt, dem gefolgt werden soll
@@ -44,28 +45,42 @@ public class XROriginHeightController : MonoBehaviour
                 }
                 if (Mathf.Abs(rightThumbstick.y) > 0.1f)
                 {
-                    rotX = -rightThumbstick.y * rotationSpeed * Time.deltaTime;
+                    rotX = rightThumbstick.y * rotationSpeed * Time.deltaTime; // Vor/Zurück umgedreht
                 }
                 // Drehe das Objekt um die lokalen Achsen
                 objectToFollow.transform.Rotate(rotX, rotY, 0f, Space.Self);
             }
         }
 
-        // Linker Thumbstick: Skalierung des Objekts auf der X-Achse (links/rechts)
+        // Linker Thumbstick: Objekt im Raum bewegen (X/Z), Taste X/Y für auf/ab (Y)
         InputDevice leftHand = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
-        if (leftHand.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 leftThumbstick))
+        bool xButton = false;
+        bool yButton = false;
+        leftHand.TryGetFeatureValue(CommonUsages.primaryButton, out xButton); // X-Button (meist primaryButton)
+        leftHand.TryGetFeatureValue(CommonUsages.secondaryButton, out yButton); // Y-Button (meist secondaryButton)
+        if (objectToFollow != null)
         {
-            if (objectToFollow != null)
+            // Thumbstick: X/Z bewegen
+            if (leftHand.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 leftThumbstick))
             {
-                if (Mathf.Abs(leftThumbstick.x) > 0.1f)
+                if (leftThumbstick.magnitude > 0.1f)
                 {
-                    Vector3 scale = objectToFollow.transform.localScale;
-                    float scaleChange = leftThumbstick.x * Time.deltaTime;
-                    scale.x = Mathf.Max(0.01f, scale.x + scaleChange); // Mindestgröße verhindern
-                    objectToFollow.transform.localScale = scale;
+                    Vector3 move = new Vector3(leftThumbstick.x, 0, leftThumbstick.y);
+                    move = xrOrigin.Camera.transform.TransformDirection(move);
+                    move.y = 0; // Keine Höhenänderung durch Stick
+                    objectToFollow.transform.position += move * panSpeed * Time.deltaTime;
                 }
             }
-            // ...optional: alte Rotation um Y-Achse für xrOrigin entfernen, falls nicht mehr benötigt...
+            // Taste X: nach unten (Y-)
+            if (xButton)
+            {
+                objectToFollow.transform.position += Vector3.down * heightButtonSpeed * Time.deltaTime;
+            }
+            // Taste Y: nach oben (Y+)
+            if (yButton)
+            {
+                objectToFollow.transform.position += Vector3.up * heightButtonSpeed * Time.deltaTime;
+            }
         }
 
 
