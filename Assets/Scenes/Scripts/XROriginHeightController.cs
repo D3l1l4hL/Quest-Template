@@ -41,7 +41,7 @@ public class XROriginHeightController : MonoBehaviour
                 float rotX = 0f;
                 if (Mathf.Abs(rightThumbstick.x) > 0.1f)
                 {
-                    rotY = rightThumbstick.x * rotationSpeed * Time.deltaTime;
+                    rotY = -rightThumbstick.x * rotationSpeed * Time.deltaTime;
                 }
                 if (Mathf.Abs(rightThumbstick.y) > 0.1f)
                 {
