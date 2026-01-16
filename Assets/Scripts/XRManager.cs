@@ -83,8 +83,10 @@ public class XRManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        // Debug-Ausgabe: Thumbstick-Werte loggen
+        Debug.Log($"LeftStick: {leftStickInput}, RightStick: {rightStickInput}");
+
         // Rechter Thumbstick: Nur links/rechts für Drehung um Y-Achse jetzt über Input System Event
-        // mein Kommentar
         if (objectToCycle != null && Mathf.Abs(rightStickInput.x) > 0.1f)
         {
             float rotY = -rightStickInput.x * rotationSpeed * Time.deltaTime;
@@ -99,7 +101,6 @@ public class XRManager : MonoBehaviour
             move.y = 0; // Keine Höhenänderung durch Stick
             objectToCycle.transform.position += move * panSpeed * Time.deltaTime;
         }
-
 
         // Rotation direkt setzen
         xrOrigin.CameraFloorOffsetObject.transform.localRotation = Quaternion.Euler(0f, targetYRotation, 0f);
