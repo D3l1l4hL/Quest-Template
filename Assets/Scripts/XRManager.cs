@@ -25,12 +25,20 @@ public class XRManager : MonoBehaviour
     private float targetYRotation;
     private Vector3 targetPan;
 
+    private Vector2 leftStickInput = Vector2.zero;
+    private Vector2 rightStickInput = Vector2.zero;
     void Start()
     {
-        // Typisierte InputActions-Instanz erzeugen und Events abonnieren
+        // Controls zuweisen und Events abonnieren
         controls = new InputSystem_Actions();
         controls.XR.PrevModel.performed += ctx => PrevModel();
         controls.XR.NextModel.performed += ctx => NextModel();
+        // Event für linken Stick (Move) abonnieren
+        controls.XR.LeftStickMove.performed += ctx => leftStickInput = ctx.ReadValue<Vector2>();
+        controls.XR.LeftStickMove.canceled += ctx => leftStickInput = Vector2.zero;
+        // Event für rechten Stick (Drehung) abonnieren
+        controls.XR.RightStickMove.performed += ctx => rightStickInput = ctx.ReadValue<Vector2>();
+        controls.XR.RightStickMove.canceled += ctx => rightStickInput = Vector2.zero;
         controls.Enable();
 
         xrOrigin = GetComponent<XROrigin>();
@@ -66,44 +74,26 @@ public class XRManager : MonoBehaviour
 
     void Update()
     {
-        // Rechter Thumbstick: Nur links/rechts für Drehung um Y-Achse
-        UnityEngine.XR.InputDevice rightHand = UnityEngine.XR.InputDevices.GetDeviceAtXRNode(UnityEngine.XR.XRNode.RightHand);
-        if (rightHand.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out Vector2 rightThumbstick))
+        // Rechter Thumbstick: Nur links/rechts für Drehung um Y-Achse jetzt über Input System Event
+        if (objectToFollow != null && Mathf.Abs(rightStickInput.x) > 0.1f)
         {
-            if (objectToFollow != null)
-            {
-                float rotY = 0f;
-                if (Mathf.Abs(rightThumbstick.x) > 0.1f)
-                {
-                    rotY = -rightThumbstick.x * rotationSpeed * Time.deltaTime;
-                }
-                // Nur um Y-Achse drehen
-                objectToFollow.transform.Rotate(0f, rotY, 0f, Space.Self);
-            }
+            float rotY = -rightStickInput.x * rotationSpeed * Time.deltaTime;
+            objectToFollow.transform.Rotate(0f, rotY, 0f, Space.Self);
         }
 
-        // Linker Thumbstick: Objekt im Raum bewegen (X/Z)
-        if (objectToFollow != null)
+        // Linker Thumbstick: Objekt im Raum bewegen (X/Z) jetzt über Input System Event
+        if (objectToFollow != null && leftStickInput.magnitude > 0.1f)
         {
-            UnityEngine.XR.InputDevice leftHand = UnityEngine.XR.InputDevices.GetDeviceAtXRNode(UnityEngine.XR.XRNode.LeftHand);
-            if (leftHand.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out Vector2 leftThumbstick))
-            {
-                if (leftThumbstick.magnitude > 0.1f)
-                {
-                    Vector3 move = new Vector3(leftThumbstick.x, 0, leftThumbstick.y);
-                    move = xrOrigin.Camera.transform.TransformDirection(move);
-                    move.y = 0; // Keine Höhenänderung durch Stick
-                    objectToFollow.transform.position += move * panSpeed * Time.deltaTime;
-                }
-            }
+            Vector3 move = new Vector3(leftStickInput.x, 0, leftStickInput.y);
+            move = xrOrigin.Camera.transform.TransformDirection(move);
+            move.y = 0; // Keine Höhenänderung durch Stick
+            objectToFollow.transform.position += move * panSpeed * Time.deltaTime;
         }
-
 
         // Keine Positions- oder Höhenänderung mehr, Tracking bleibt vollständig erhalten
 
         // Rotation direkt setzen
         xrOrigin.CameraFloorOffsetObject.transform.localRotation = Quaternion.Euler(0f, targetYRotation, 0f);
-
 
         // ...Model-Cycling entfernt, nur noch Höhenänderung über X/Y-Button...
     }

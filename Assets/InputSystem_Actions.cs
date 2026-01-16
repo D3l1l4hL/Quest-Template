@@ -132,7 +132,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""name"": ""Crouch"",
                     ""type"": ""Button"",
                     ""id"": ""27c5f898-bc57-4ee1-8800-db469aca5fe3"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -1099,6 +1099,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LeftStickMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""a2a5f378-77df-45f5-ad45-9a7cb1abad18"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RightStickMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""00c637d7-950f-4b15-8e64-11418ecfaed8"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -1121,6 +1139,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""NextModel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33a8a253-ad97-405f-92d8-6242b9e1f340"",
+                    ""path"": ""<XRController>{LeftHand}/thumbstick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftStickMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a2edeefe-304c-4513-a087-429424a37eac"",
+                    ""path"": ""<XRController>{RightHand}/thumbstick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightStickMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1217,6 +1257,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_XR = asset.FindActionMap("XR", throwIfNotFound: true);
         m_XR_PrevModel = m_XR.FindAction("PrevModel", throwIfNotFound: true);
         m_XR_NextModel = m_XR.FindAction("NextModel", throwIfNotFound: true);
+        m_XR_LeftStickMove = m_XR.FindAction("LeftStickMove", throwIfNotFound: true);
+        m_XR_RightStickMove = m_XR.FindAction("RightStickMove", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1680,6 +1722,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private List<IXRActions> m_XRActionsCallbackInterfaces = new List<IXRActions>();
     private readonly InputAction m_XR_PrevModel;
     private readonly InputAction m_XR_NextModel;
+    private readonly InputAction m_XR_LeftStickMove;
+    private readonly InputAction m_XR_RightStickMove;
     /// <summary>
     /// Provides access to input actions defined in input action map "XR".
     /// </summary>
@@ -1699,6 +1743,14 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "XR/NextModel".
         /// </summary>
         public InputAction @NextModel => m_Wrapper.m_XR_NextModel;
+        /// <summary>
+        /// Provides access to the underlying input action "XR/LeftStickMove".
+        /// </summary>
+        public InputAction @LeftStickMove => m_Wrapper.m_XR_LeftStickMove;
+        /// <summary>
+        /// Provides access to the underlying input action "XR/RightStickMove".
+        /// </summary>
+        public InputAction @RightStickMove => m_Wrapper.m_XR_RightStickMove;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1731,6 +1783,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @NextModel.started += instance.OnNextModel;
             @NextModel.performed += instance.OnNextModel;
             @NextModel.canceled += instance.OnNextModel;
+            @LeftStickMove.started += instance.OnLeftStickMove;
+            @LeftStickMove.performed += instance.OnLeftStickMove;
+            @LeftStickMove.canceled += instance.OnLeftStickMove;
+            @RightStickMove.started += instance.OnRightStickMove;
+            @RightStickMove.performed += instance.OnRightStickMove;
+            @RightStickMove.canceled += instance.OnRightStickMove;
         }
 
         /// <summary>
@@ -1748,6 +1806,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @NextModel.started -= instance.OnNextModel;
             @NextModel.performed -= instance.OnNextModel;
             @NextModel.canceled -= instance.OnNextModel;
+            @LeftStickMove.started -= instance.OnLeftStickMove;
+            @LeftStickMove.performed -= instance.OnLeftStickMove;
+            @LeftStickMove.canceled -= instance.OnLeftStickMove;
+            @RightStickMove.started -= instance.OnRightStickMove;
+            @RightStickMove.performed -= instance.OnRightStickMove;
+            @RightStickMove.canceled -= instance.OnRightStickMove;
         }
 
         /// <summary>
@@ -2016,5 +2080,19 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnNextModel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LeftStickMove" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLeftStickMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RightStickMove" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRightStickMove(InputAction.CallbackContext context);
     }
 }
