@@ -28,6 +28,9 @@ public class XRManager : MonoBehaviour
     private Vector2 leftStickInput = Vector2.zero;
     private Vector2 rightStickInput = Vector2.zero;
     
+    /// <summary>
+    /// Start is called before the first frame update       
+    /// </summary>
     void Start()
     {
         // Controls zuweisen und Events abonnieren
@@ -75,6 +78,9 @@ public class XRManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Update is called once per frame 
+    /// </summary>
     void Update()
     {
         // Rechter Thumbstick: Nur links/rechts für Drehung um Y-Achse jetzt über Input System Event
