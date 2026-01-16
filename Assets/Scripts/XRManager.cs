@@ -9,13 +9,13 @@ using UnityEngine.InputSystem;
 
 public class XRManager : MonoBehaviour
 {
-    // Typisierte Actions-Klasse (wird von Unity generiert)
+    // Typisierte Actions-Klasse (wird von Unity generiert) 
     private InputSystem_Actions controls;
     //public float heightSpeed = 1.0f; // Geschwindigkeit der Höhenänderung (z.B. per Stick)
-    public float heightButtonSpeed = 0.2f; // Geschwindigkeit für Taste X/Y (langsamer)
+    public float heightButtonSpeed1 = 0.2f; // Geschwindigkeit für Taste X/Y (langsamer)
     public float rotationSpeed = 60f; // Rotationsgeschwindigkeit in Grad pro Sekunde
     public float panSpeed = 1.0f; // Geschwindigkeit für Panning
-    public GameObject objectToFollow; 
+    public GameObject objectToCycle; 
     public List<GameObject> models = new List<GameObject>();
     private int currentModelIndex = -1;
     private bool prevPrimaryButton = false;
@@ -84,19 +84,20 @@ public class XRManager : MonoBehaviour
     void Update()
     {
         // Rechter Thumbstick: Nur links/rechts für Drehung um Y-Achse jetzt über Input System Event
-        if (objectToFollow != null && Mathf.Abs(rightStickInput.x) > 0.1f)
+        // mein Kommentar
+        if (objectToCycle != null && Mathf.Abs(rightStickInput.x) > 0.1f)
         {
             float rotY = -rightStickInput.x * rotationSpeed * Time.deltaTime;
-            objectToFollow.transform.Rotate(0f, rotY, 0f, Space.Self);
+            objectToCycle.transform.Rotate(0f, rotY, 0f, Space.Self);
         }
 
         // Linker Thumbstick: Objekt im Raum bewegen (X/Z) jetzt über Input System Event
-        if (objectToFollow != null && leftStickInput.magnitude > 0.1f)
+        if (objectToCycle != null && leftStickInput.magnitude > 0.1f)
         {
             Vector3 move = new Vector3(leftStickInput.x, 0, leftStickInput.y);
             move = xrOrigin.Camera.transform.TransformDirection(move);
             move.y = 0; // Keine Höhenänderung durch Stick
-            objectToFollow.transform.position += move * panSpeed * Time.deltaTime;
+            objectToCycle.transform.position += move * panSpeed * Time.deltaTime;
         }
 
 
