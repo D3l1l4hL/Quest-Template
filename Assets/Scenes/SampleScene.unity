@@ -1548,10 +1548,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b4c8bc58f22f6c47af84c1eb6b9f84c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::XRManager
-  heightButtonSpeed: 0.2
+  heightButtonSpeed1: 0.2
   rotationSpeed: 60
   panSpeed: 1
-  objectToFollow: {fileID: 1912943667}
+  objectToCycle: {fileID: 1912943667}
   models: []
 --- !u!1001 &1202958057
 PrefabInstance:
