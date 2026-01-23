@@ -51,7 +51,7 @@ public class XRManager : MonoBehaviour
 
         xrOrigin = GetComponent<XROrigin>();
         if (xrOrigin == null)
-            xrOrigin = FindObjectOfType<XROrigin>();
+            xrOrigin = FindFirstObjectByType<XROrigin>();
 
         if (xrOrigin != null && xrOrigin.CameraFloorOffsetObject != null)
         {
