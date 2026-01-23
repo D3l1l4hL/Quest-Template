@@ -827,8 +827,8 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Android: 
-    Standalone: 
+    Android: META_USE_STICK_CONTROL_THUMBSTICKS
+    Standalone: META_USE_STICK_CONTROL_THUMBSTICKS
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
@@ -925,7 +925,7 @@ PlayerSettings:
   qnxGraphicConfPath: 
   apiCompatibilityLevel: 6
   captureStartupLogs: {}
-  activeInputHandler: 1
+  activeInputHandler: 2
   windowsGamepadBackendHint: 0
   cloudProjectId: f2ab64e6-74cc-44e6-a434-d430ff21b06f
   framebufferDepthMemorylessMode: 0

@@ -1145,7 +1145,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""33a8a253-ad97-405f-92d8-6242b9e1f340"",
-                    ""path"": ""<XRController>{LeftHand}/primary2DAxis"",
+                    ""path"": ""<XRController>{LeftHand}/thumbstick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";XR"",
@@ -1156,7 +1156,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a2edeefe-304c-4513-a087-429424a37eac"",
-                    ""path"": ""<XRController>{RightHand}/primary2DAxis"",
+                    ""path"": ""<XRController>{RightHand}/thumbstick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";XR"",

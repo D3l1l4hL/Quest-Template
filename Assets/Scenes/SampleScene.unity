@@ -1453,7 +1453,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1043474833}
-  - component: {fileID: 1043474836}
   - component: {fileID: 1043474832}
   - component: {fileID: 1043474831}
   - component: {fileID: 1043474835}
@@ -1536,23 +1535,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1043474836
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1043474830}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b4c8bc58f22f6c47af84c1eb6b9f84c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::XRManager
-  heightButtonSpeed: 0.2
-  rotationSpeed: 60
-  panSpeed: 1
-  objectToFollow: {fileID: 1912943667}
-  models: []
 --- !u!1001 &1202958057
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1867,6 +1849,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1912943668}
+  - component: {fileID: 1912943669}
   m_Layer: 0
   m_Name: Models
   m_TagString: Untagged
@@ -1892,6 +1875,23 @@ Transform:
   - {fileID: 1202958058}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1912943669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912943667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b4c8bc58f22f6c47af84c1eb6b9f84c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::XRManager
+  heightButtonSpeed1: 0.2
+  rotationSpeed: 60
+  panSpeed: 0.3
+  objectToCycle: {fileID: 1912943667}
+  models: []
 --- !u!1 &2075533834
 GameObject:
   m_ObjectHideFlags: 0

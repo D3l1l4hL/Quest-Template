@@ -35,28 +35,48 @@ public class XRManager : MonoBehaviour
     {
         // Controls zuweisen und Events abonnieren
         controls = new InputSystem_Actions();
-        controls.XR.PrevModel.performed += ctx => PrevModel();
-        controls.XR.NextModel.performed += ctx => NextModel();
+        controls.XR.PrevModel.performed += ctx => PrevModel();          // X Button Pressed
+        controls.XR.NextModel.performed += ctx => NextModel();          // Y Button Pressed
+        
         // Event für linken Stick (Move) abonnieren
         controls.XR.LeftStickMove.performed += ctx => leftStickInput = ctx.ReadValue<Vector2>();
         controls.XR.LeftStickMove.canceled += ctx => leftStickInput = Vector2.zero;
+         controls.XR.LeftStickMove.Enable();
         // Event für rechten Stick (Drehung) abonnieren
         controls.XR.RightStickMove.performed += ctx => rightStickInput = ctx.ReadValue<Vector2>();
         controls.XR.RightStickMove.canceled += ctx => rightStickInput = Vector2.zero;
+          controls.XR.RightStickMove.Enable();
         controls.Enable();
 
 
         xrOrigin = GetComponent<XROrigin>();
-        if (xrOrigin != null)
+        if (xrOrigin == null)
+            xrOrigin = FindObjectOfType<XROrigin>();
+
+        if (xrOrigin != null && xrOrigin.CameraFloorOffsetObject != null)
         {
             var pos = xrOrigin.CameraFloorOffsetObject.transform.localPosition;
             targetHeight = pos.y;
             targetYRotation = xrOrigin.CameraFloorOffsetObject.transform.localEulerAngles.y;
             targetPan = new Vector3(pos.x, 0f, pos.z);
         }
+        else
+        {
+            Debug.LogWarning("XROrigin or its CameraFloorOffsetObject not found. Movement/rotation using xrOrigin will be skipped until it's available.");
+        }
 
         // Modelle aus dem GameObject "Models" im Scene-Hierarchiebaum befüllen
         GameObject modelsParent = GameObject.Find("Models");
+        // Wenn kein Models-Parent vorhanden ist, fallback auf objectToCycle oder dieses GameObject
+        if (modelsParent == null)
+        {
+            if (objectToCycle == null)
+            {
+                objectToCycle = this.gameObject;
+            }
+            modelsParent = objectToCycle;
+        }
+
         if (modelsParent != null)
         {
             models.Clear();
@@ -65,16 +85,23 @@ public class XRManager : MonoBehaviour
                 models.Add(child.gameObject);
             }
 
-            // Show first model initially
+            // Show first model initially (oder das aktive Kind)
             if (models.Count > 0)
             {
-                currentModelIndex = 0;
-                ShowOnlyModel(0);
+                // Wenn eines der Kinder aktiv ist, wähle dieses als Startindex
+                int firstActive = -1;
+                for (int i = 0; i < models.Count; i++)
+                {
+                    if (models[i] != null && models[i].activeSelf)
+                    {
+                        firstActive = i;
+                        break;
+                    }
+                }
+
+                currentModelIndex = firstActive >= 0 ? firstActive : 0;
+                ShowOnlyModel(currentModelIndex);
             }
-        }
-        else
-        {
-            Debug.LogWarning("Kein GameObject 'Models' gefunden!");
         }
     }
 
@@ -83,6 +110,15 @@ public class XRManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        // Polling fallback: direkten Wert der Actions pro Frame lesen (Üpolling)
+        // if (controls != null)
+        // {
+        //     if (controls.XR.LeftStickMove.enabled)
+        //         leftStickInput = controls.XR.LeftStickMove.ReadValue<Vector2>();
+        //     if (controls.XR.RightStickMove.enabled)
+        //         rightStickInput = controls.XR.RightStickMove.ReadValue<Vector2>();
+        // }
+
         // Debug-Ausgabe: Thumbstick-Werte loggen
         Debug.Log($"LeftStick: {leftStickInput}, RightStick: {rightStickInput}");
 
@@ -94,7 +130,7 @@ public class XRManager : MonoBehaviour
         }
 
         // Linker Thumbstick: Objekt im Raum bewegen (X/Z) jetzt über Input System Event
-        if (objectToCycle != null && leftStickInput.magnitude > 0.1f)
+        if (objectToCycle != null && Mathf.Abs(leftStickInput.x) > 0.1f && xrOrigin != null && xrOrigin.Camera != null)
         {
             Vector3 move = new Vector3(leftStickInput.x, 0, leftStickInput.y);
             move = xrOrigin.Camera.transform.TransformDirection(move);
@@ -102,8 +138,11 @@ public class XRManager : MonoBehaviour
             objectToCycle.transform.position += move * panSpeed * Time.deltaTime;
         }
 
-        // Rotation direkt setzen
-        xrOrigin.CameraFloorOffsetObject.transform.localRotation = Quaternion.Euler(0f, targetYRotation, 0f);
+        // Rotation direkt setzen (nur wenn xrOrigin verfügbar ist)
+        if (xrOrigin != null && xrOrigin.CameraFloorOffsetObject != null)
+        {
+            xrOrigin.CameraFloorOffsetObject.transform.localRotation = Quaternion.Euler(0f, targetYRotation, 0f);
+        }
 
     }
 
