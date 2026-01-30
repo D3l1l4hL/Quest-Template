@@ -1126,6 +1126,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RemoveVertebrae"",
+                    ""type"": ""Button"",
+                    ""id"": ""caf9441d-554a-4a4c-95e7-f6ffaafeb2b5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1181,6 +1190,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Rotatevertebrae"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""182213df-90a8-4f4e-b15e-661c050a71a9"",
+                    ""path"": ""<XRController>{RightHand}/primaryButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RemoveVertebrae"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1280,6 +1300,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_XR_LeftStickMove = m_XR.FindAction("LeftStickMove", throwIfNotFound: true);
         m_XR_RightStickMove = m_XR.FindAction("RightStickMove", throwIfNotFound: true);
         m_XR_Rotatevertebrae = m_XR.FindAction("Rotatevertebrae", throwIfNotFound: true);
+        m_XR_RemoveVertebrae = m_XR.FindAction("RemoveVertebrae", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1746,6 +1767,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_XR_LeftStickMove;
     private readonly InputAction m_XR_RightStickMove;
     private readonly InputAction m_XR_Rotatevertebrae;
+    private readonly InputAction m_XR_RemoveVertebrae;
     /// <summary>
     /// Provides access to input actions defined in input action map "XR".
     /// </summary>
@@ -1777,6 +1799,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "XR/Rotatevertebrae".
         /// </summary>
         public InputAction @Rotatevertebrae => m_Wrapper.m_XR_Rotatevertebrae;
+        /// <summary>
+        /// Provides access to the underlying input action "XR/RemoveVertebrae".
+        /// </summary>
+        public InputAction @RemoveVertebrae => m_Wrapper.m_XR_RemoveVertebrae;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1818,6 +1844,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Rotatevertebrae.started += instance.OnRotatevertebrae;
             @Rotatevertebrae.performed += instance.OnRotatevertebrae;
             @Rotatevertebrae.canceled += instance.OnRotatevertebrae;
+            @RemoveVertebrae.started += instance.OnRemoveVertebrae;
+            @RemoveVertebrae.performed += instance.OnRemoveVertebrae;
+            @RemoveVertebrae.canceled += instance.OnRemoveVertebrae;
         }
 
         /// <summary>
@@ -1844,6 +1873,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Rotatevertebrae.started -= instance.OnRotatevertebrae;
             @Rotatevertebrae.performed -= instance.OnRotatevertebrae;
             @Rotatevertebrae.canceled -= instance.OnRotatevertebrae;
+            @RemoveVertebrae.started -= instance.OnRemoveVertebrae;
+            @RemoveVertebrae.performed -= instance.OnRemoveVertebrae;
+            @RemoveVertebrae.canceled -= instance.OnRemoveVertebrae;
         }
 
         /// <summary>
@@ -2133,5 +2165,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRotatevertebrae(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RemoveVertebrae" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRemoveVertebrae(InputAction.CallbackContext context);
     }
 }

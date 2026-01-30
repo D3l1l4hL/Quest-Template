@@ -1040,6 +1040,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "RemoveVertebrae",
+                    "type": "Button",
+                    "id": "caf9441d-554a-4a4c-95e7-f6ffaafeb2b5",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1095,6 +1104,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Rotatevertebrae",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "182213df-90a8-4f4e-b15e-661c050a71a9",
+                    "path": "<XRController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RemoveVertebrae",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
