@@ -27,6 +27,7 @@ public class XRManager : MonoBehaviour
 
     private Vector2 leftStickInput = Vector2.zero;
     private Vector2 rightStickInput = Vector2.zero;
+    private int vertebraToRemove = 0;
     
     /// <summary>
     /// Start is called before the first frame update       
@@ -37,6 +38,7 @@ public class XRManager : MonoBehaviour
         controls = new InputSystem_Actions();
         controls.XR.PrevModel.performed += ctx => PrevModel();          // X Button Pressed
         controls.XR.NextModel.performed += ctx => NextModel();          // Y Button Pressed
+        controls.XR.RemoveVertebrae.performed += ctx => RemoveVertebra(vertebraToRemove++); // Remove Vertebra Button
         
         // Event für linken Stick (Move) abonnieren
         controls.XR.LeftStickMove.performed += ctx => leftStickInput = ctx.ReadValue<Vector2>();
@@ -210,5 +212,71 @@ public class XRManager : MonoBehaviour
                 ShowOnlyModel(currentModelIndex);
             }
         }
+    }
+
+    /// <summary>
+    /// Entfernt einen Wirbel aus der Wirbelsäule und bewegt ihn zum Benutzer
+    /// </summary>
+    /// <param name="vertebraIndex">Index des Wirbels (0-basiert)</param>
+    public void RemoveVertebra(int vertebraIndex)
+    {
+        if (currentModelIndex < 0 || currentModelIndex >= models.Count || models[currentModelIndex] == null)
+        {
+            Debug.LogWarning("Kein gültiges Modell ausgewählt.");
+            return;
+        }
+
+        GameObject spine = models[currentModelIndex];
+        vertebraIndex %= spine.transform.childCount; // Wrap around if index exceeds child count
+        if (vertebraIndex < 0 || vertebraIndex >= spine.transform.childCount)
+        {
+            Debug.LogWarning("Ungültiger Wirbel-Index.");
+            return;
+        }
+
+        Transform vertebra = spine.transform.GetChild(vertebraIndex);
+        if (vertebra == null)
+        {
+            Debug.LogWarning("Wirbel nicht gefunden.");
+            return;
+        }
+
+        // Wirbel aus der Hierarchie entfernen (aber nicht zerstören)
+        vertebra.SetParent(null);
+
+        // Position zum Benutzer berechnen (vor der Kamera)
+        if (xrOrigin != null && xrOrigin.Camera != null)
+        {
+            Vector3 cameraPos = xrOrigin.Camera.transform.position;
+            Vector3 cameraForward = xrOrigin.Camera.transform.forward;
+            Vector3 targetPos = cameraPos + cameraForward * 0.5f; // 0.5m vor der Kamera
+
+            // Bewegung starten
+            StartCoroutine(MoveVertebraToUser(vertebra, targetPos));
+        }
+        else
+        {
+            Debug.LogWarning("XR Origin oder Kamera nicht gefunden.");
+        }
+    }
+
+    /// <summary>
+    /// Coroutine, um den Wirbel zum Benutzer zu bewegen
+    /// </summary>
+    private System.Collections.IEnumerator MoveVertebraToUser(Transform vertebra, Vector3 targetPos)
+    {
+        float duration = 1.0f; // Dauer der Bewegung in Sekunden
+        float elapsed = 0f;
+        Vector3 startPos = vertebra.position;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            vertebra.position = Vector3.Lerp(startPos, targetPos, t);
+            yield return null;
+        }
+
+        vertebra.position = targetPos;
     }
 }
